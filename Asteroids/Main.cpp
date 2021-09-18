@@ -1,8 +1,14 @@
+#pragma warning(push)
+#pragma warning(disable : 26812)
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
+#pragma warning(pop)
 #include <stdio.h>
 #include <string>
 #include <cmath>
+#include <sstream>
+
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 960;
@@ -19,6 +25,11 @@ public:
 
 	//Loads image at specified path
 	bool loadFromFile(std::string path);
+
+	#if defined(SDL_TTF_MAJOR_VERSION)
+	//Creates image from font string
+	bool loadFromRenderedText(std::string textureText, SDL_Color textColor);
+	#endif
 
 	//Deallocates texture
 	void free();
@@ -48,6 +59,39 @@ private:
 	int mHeight;
 };
 
+//The application time based timer
+class LTimer
+{
+public:
+	//Initializes variables
+	LTimer();
+
+	//The various clock actions
+	void start();
+	void stop();
+	void pause();
+	void unpause();
+
+	//Gets the timer's time
+	Uint32 getTicks();
+
+	//Checks the status of the timer
+	bool isStarted();
+	bool isPaused();
+
+private:
+	//The clock time when the timer started
+	Uint32 mStartTicks;
+
+	//The ticks stored when the timer was paused
+	Uint32 mPausedTicks;
+
+	//The timer status
+	bool mPaused;
+	bool mStarted;
+};
+
+
 //Starts up SDL and creates window
 bool init();
 
@@ -63,8 +107,12 @@ SDL_Window* gWindow = NULL;
 //The window renderer
 SDL_Renderer* gRenderer = NULL;
 
+//Globally used font
+TTF_Font* gFont = NULL;
+
 //Scene texture
-LTexture gArrowTexture;
+LTexture gStarshipTexture;
+LTexture gFPSTextTexture;
 
 
 LTexture::LTexture()
@@ -122,6 +170,44 @@ bool LTexture::loadFromFile(std::string path)
 	return mTexture != NULL;
 }
 
+#if defined(SDL_TTF_MAJOR_VERSION)
+bool LTexture::loadFromRenderedText(std::string textureText, SDL_Color textColor)
+{
+	//Get rid of preexisting texture
+	free();
+
+	//Render text surface
+	SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
+	if (textSurface != NULL)
+	{
+		//Create texture from surface pixels
+		mTexture = SDL_CreateTextureFromSurface(gRenderer, textSurface);
+		if (mTexture == NULL)
+		{
+			printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+		}
+		else
+		{
+			//Get image dimensions
+			mWidth = textSurface->w;
+			mHeight = textSurface->h;
+		}
+
+		//Get rid of old surface
+		SDL_FreeSurface(textSurface);
+	}
+	else
+	{
+		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+	}
+
+
+	//Return success
+	return mTexture != NULL;
+}
+#endif
+
+
 void LTexture::free()
 {
 	//Free texture if it exists
@@ -178,6 +264,110 @@ int LTexture::getHeight()
 	return mHeight;
 }
 
+
+LTimer::LTimer()
+{
+	//Initialize the variables
+	mStartTicks = 0;
+	mPausedTicks = 0;
+
+	mPaused = false;
+	mStarted = false;
+}
+
+void LTimer::start()
+{
+	//Start the timer
+	mStarted = true;
+
+	//Unpause the timer
+	mPaused = false;
+
+	//Get the current clock time
+	mStartTicks = SDL_GetTicks();
+	mPausedTicks = 0;
+}
+
+void LTimer::stop()
+{
+	//Stop the timer
+	mStarted = false;
+
+	//Unpause the timer
+	mPaused = false;
+
+	//Clear tick variables
+	mStartTicks = 0;
+	mPausedTicks = 0;
+}
+
+void LTimer::pause()
+{
+	//If the timer is running and isn't already paused
+	if (mStarted && !mPaused)
+	{
+		//Pause the timer
+		mPaused = true;
+
+		//Calculate the paused ticks
+		mPausedTicks = SDL_GetTicks() - mStartTicks;
+		mStartTicks = 0;
+	}
+}
+
+void LTimer::unpause()
+{
+	//If the timer is running and paused
+	if (mStarted && mPaused)
+	{
+		//Unpause the timer
+		mPaused = false;
+
+		//Reset the starting ticks
+		mStartTicks = SDL_GetTicks() - mPausedTicks;
+
+		//Reset the paused ticks
+		mPausedTicks = 0;
+	}
+}
+
+
+Uint32 LTimer::getTicks()
+{
+	//The actual timer time
+	Uint32 time = 0;
+
+	//If the timer is running
+	if (mStarted)
+	{
+		//If the timer is paused
+		if (mPaused)
+		{
+			//Return the number of ticks when the timer was paused
+			time = mPausedTicks;
+		}
+		else
+		{
+			//Return the current time minus the start time
+			time = SDL_GetTicks() - mStartTicks;
+		}
+	}
+
+	return time;
+}
+
+bool LTimer::isStarted()
+{
+	//Timer is running and paused or unpaused
+	return mStarted;
+}
+
+bool LTimer::isPaused()
+{
+	//Timer is running and paused
+	return mPaused && mStarted;
+}
+
 bool init()
 {
 	//Initialization flag
@@ -225,6 +415,13 @@ bool init()
 					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
 					success = false;
 				}
+
+				//Initialize SDL_ttf
+				if (TTF_Init() == -1)
+				{
+					printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+					success = false;
+				}
 			}
 		}
 	}
@@ -238,11 +435,20 @@ bool loadMedia()
 	bool success = true;
 
 	//Load arrow
-	if (!gArrowTexture.loadFromFile("Resources/starship.png"))
+	if (!gStarshipTexture.loadFromFile("Resources/starship.png"))
 	{
 		printf("Failed to load arrow texture!\n");
 		success = false;
 	}
+
+	//Open the font
+	gFont = TTF_OpenFont("Resources/lazy.ttf", 28);
+	if (gFont == NULL)
+	{
+		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
+		success = false;
+	}
+
 
 	return success;
 }
@@ -250,7 +456,8 @@ bool loadMedia()
 void close()
 {
 	//Free loaded images
-	gArrowTexture.free();
+	gStarshipTexture.free();
+	gFPSTextTexture.free();
 
 	//Destroy window	
 	SDL_DestroyRenderer(gRenderer);
@@ -289,6 +496,19 @@ int main(int argc, char* args[])
 			double degrees = 0;
 			double degrees_inc = 0;
 
+			// Set white color for text
+			SDL_Color textColor = { 255, 255, 255, 255 };
+
+			// The frames per second timer
+			LTimer fpsTimer;
+
+			// In memory text stream
+			std::stringstream timeText;
+
+			// Start counting frames per second
+			int countedFrames = 0;
+			fpsTimer.start();
+
 			//While application is running
 			while (!quit)
 			{
@@ -300,39 +520,23 @@ int main(int argc, char* args[])
 					{
 						quit = true;
 					}
-					else if (e.type == SDL_KEYDOWN)
-					{
-						switch (e.key.keysym.sym)
-						{
-						case SDLK_RIGHT:
-							degrees_inc = 2;
-							break;
+				} 
 
-						case SDLK_LEFT:
-							degrees_inc = -2;
-							break;
+				const Uint8* kb = SDL_GetKeyboardState(NULL);
+				degrees_inc = (2 * -kb[SDL_SCANCODE_LEFT]) + (2 * kb[SDL_SCANCODE_RIGHT]);
 
-						case SDLK_UP:
-							break;
-						}
-					}
-					else if (e.type == SDL_KEYUP)
-					{
-						switch (e.key.keysym.sym)
-						{
-						case SDLK_RIGHT:
-							degrees_inc = 0;
-							break;
-
-						case SDLK_LEFT:
-							degrees_inc = 0;
-							break;
-
-						case SDLK_UP:
-							break;
-						}
-					}
+				// Calculate and correct fps
+				float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
+				if (avgFPS > 2000000) 
+				{
+					avgFPS = 0;
 				}
+
+				// Set text
+				timeText.str("");
+				timeText << "Average FPS: " << avgFPS;
+
+
 
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0xFF);
@@ -340,10 +544,17 @@ int main(int argc, char* args[])
 
 				//Render arrow
 				degrees += degrees_inc;
-				gArrowTexture.render((SCREEN_WIDTH - gArrowTexture.getWidth()) / 2, (SCREEN_HEIGHT - gArrowTexture.getHeight()) / 2, NULL, degrees, NULL, SDL_FLIP_NONE);
+				gStarshipTexture.render((SCREEN_WIDTH - gStarshipTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStarshipTexture.getHeight()) / 2, NULL, degrees, NULL, SDL_FLIP_NONE);
+				//Render text
+				if (!gFPSTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor))
+				{
+					printf("Unable to render FPS texture!\n");
+				}
+				gFPSTextTexture.render(100, 50);
 
 				//Update screen
 				SDL_RenderPresent(gRenderer);
+				++countedFrames;
 			}
 		}
 	}
