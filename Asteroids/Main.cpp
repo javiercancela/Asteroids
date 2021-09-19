@@ -10,6 +10,7 @@
 #include <sstream>
 #include "LTexture.h"
 #include "LTimer.h"
+#include "Starship.h"
 
 
 const int SCREEN_WIDTH = 1280;
@@ -162,8 +163,7 @@ int main(int argc, char* args[])
 			SDL_Event e;
 
 			//Angle of rotation
-			double degrees = 0;
-			double degrees_inc = 0;
+			double degrees_rot = 0;
 
 			// Set white color for text
 			SDL_Color textColor = { 255, 255, 255, 255 };
@@ -177,6 +177,9 @@ int main(int argc, char* args[])
 			// Start counting frames per second
 			int countedFrames = 0;
 			fpsTimer.start();
+
+			// Create starship
+			Starship starship;
 
 			//While application is running
 			while (!quit)
@@ -192,7 +195,7 @@ int main(int argc, char* args[])
 				}
 
 				const Uint8* kb = SDL_GetKeyboardState(NULL);
-				degrees_inc = (2 * -kb[SDL_SCANCODE_LEFT]) + (2 * kb[SDL_SCANCODE_RIGHT]);
+				degrees_rot = (2 * -kb[SDL_SCANCODE_LEFT]) + (2 * kb[SDL_SCANCODE_RIGHT]);
 
 				// Calculate and correct fps
 				float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
@@ -211,9 +214,11 @@ int main(int argc, char* args[])
 				SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0xFF);
 				SDL_RenderClear(gRenderer);
 
-				//Render arrow
-				degrees += degrees_inc;
-				gStarshipTexture.render((SCREEN_WIDTH - gStarshipTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStarshipTexture.getHeight()) / 2, gRenderer, NULL, degrees, NULL, SDL_FLIP_NONE);
+				//Render starship
+				starship.rotate(degrees_rot);
+				Uint32 starshipPosX = (SCREEN_WIDTH - gStarshipTexture.getWidth()) / 2 + starship.getXPos();
+				Uint32 starshipPosY = (SCREEN_HEIGHT - gStarshipTexture.getHeight()) / 2 + starship.getYPos();
+				gStarshipTexture.render(starshipPosX, starshipPosY, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
 				//Render text
 				if (!gFPSTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor, gRenderer, gFont))
 				{
