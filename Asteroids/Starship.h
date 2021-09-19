@@ -1,5 +1,7 @@
 #pragma once
 #include <SDL.h>
+#include <cmath>
+#include <sstream>
 
 class Starship
 {
@@ -13,14 +15,15 @@ public:
 	Uint8 getXPos();
 	Uint8 getYPos();
 
-	void calculateSpeed();
 	void calculatePosition();
+	std::stringstream getDebugText();
 
 private:
-	Uint8 mXPos;
-	Uint8 mYPos;
+	double mXPos;
+	double mYPos;
 
 	double mMovementDirection;
 	double mStarshipDirection;
 	double mSpeed;
+	static const double baseThrust;
 };

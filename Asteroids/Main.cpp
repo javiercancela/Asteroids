@@ -195,7 +195,16 @@ int main(int argc, char* args[])
 				}
 
 				const Uint8* kb = SDL_GetKeyboardState(NULL);
+
+				// Rotate starship
 				degrees_rot = (2 * -kb[SDL_SCANCODE_LEFT]) + (2 * kb[SDL_SCANCODE_RIGHT]);
+				starship.rotate(degrees_rot);
+
+				// If UP pressed, thrust
+				if (kb[SDL_SCANCODE_UP] > 0)
+				{
+					starship.thrust();
+				}
 
 				// Calculate and correct fps
 				float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
@@ -215,12 +224,22 @@ int main(int argc, char* args[])
 				SDL_RenderClear(gRenderer);
 
 				//Render starship
-				starship.rotate(degrees_rot);
+				starship.calculatePosition();
 				Uint32 starshipPosX = (SCREEN_WIDTH - gStarshipTexture.getWidth()) / 2 + starship.getXPos();
-				Uint32 starshipPosY = (SCREEN_HEIGHT - gStarshipTexture.getHeight()) / 2 + starship.getYPos();
+				if (starshipPosX > SCREEN_WIDTH)
+				{
+					starshipPosX = 0;
+				}
+				Uint32 starshipPosY = (SCREEN_HEIGHT - gStarshipTexture.getHeight()) / 2 - starship.getYPos();
+				if (starshipPosY > SCREEN_WIDTH)
+				{
+					starshipPosX = 0;
+				}
 				gStarshipTexture.render(starshipPosX, starshipPosY, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
+
 				//Render text
-				if (!gFPSTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor, gRenderer, gFont))
+				if (!gFPSTextTexture.loadFromRenderedText(starship.getDebugText().str().c_str(), textColor, gRenderer, gFont))
+				//if (!gFPSTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor, gRenderer, gFont))
 				{
 					printf("Unable to render FPS texture!\n");
 				}
