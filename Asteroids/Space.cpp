@@ -5,14 +5,28 @@ Space::Space(int spaceWidth, int spaceHeight, int spaceshipSize, Starship* stars
 	mSpaceHeight = spaceHeight;
 	mSpaceWidth = spaceWidth;
 	mSpaceshipSize = spaceshipSize;
-	mSsXPos = (mSpaceWidth - mSpaceshipSize) / 2;
-	mSsYPos = (mSpaceHeight - mSpaceshipSize) / 2;
+	
+	mSsPos.X = (mSpaceWidth - mSpaceshipSize) / 2;
+	mSsPos.Y = (mSpaceHeight - mSpaceshipSize) / 2;
 	mStarship = starship;
 }
 
 void Space::updateSpace()
 {
 	SpacePoint starshipMovement = mStarship->getPositionChange();
+	mSsPos.add(starshipMovement);
+	if (mSsPos.X > mSpaceWidth)
+	{
+		mSsPos.X = mSsPos.X - mSpaceWidth;
+	}
+	if (mSsPos.Y > mSpaceHeight)
+	{
+		mSsPos.Y = mSsPos.Y - mSpaceHeight;
+	}
+}
 
+SpacePoint Space::getStarshipPosition()
+{
+	return mSsPos;
 }
 

@@ -63,7 +63,7 @@ SpacePoint Starship::getPositionChange()
 std::stringstream Starship::getDebugText()
 {
 	std::stringstream debugText;
-	debugText << "speed: " << mSpeed << "movementDirection: " << mMovementDirection << " - starshipDirection: " << mStarshipDirection << " - posX: " << (int)mXPos << " - posY: " << (int)mYPos;
+	debugText << "speed: " << mSpeed << " - movementDirection: " << mMovementDirection << " - starshipDirection: " << mStarshipDirection;
 	return debugText;
 }
 

@@ -11,10 +11,11 @@
 #include "LTexture.h"
 #include "LTimer.h"
 #include "Starship.h"
+#include "Space.h"
 
 
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 960;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
 //Starts up SDL and creates window
 bool init();
@@ -178,8 +179,9 @@ int main(int argc, char* args[])
 			int countedFrames = 0;
 			fpsTimer.start();
 
-			// Create starship
+			// Create starship and space
 			Starship starship;
+			Space space(SCREEN_WIDTH, SCREEN_HEIGHT, 40, &starship);
 
 			//While application is running
 			while (!quit)
@@ -224,19 +226,9 @@ int main(int argc, char* args[])
 				SDL_RenderClear(gRenderer);
 
 				//Render starship
-				starship.calculatePosition();
-				Uint32 starshipPosX = (SCREEN_WIDTH - gStarshipTexture.getWidth()) / 2 + starship.getXPos();
-				if (starshipPosX > SCREEN_WIDTH)
-				{
-					starshipPosX = 0;
-				}
-				Uint32 starshipPosY = (SCREEN_HEIGHT - gStarshipTexture.getHeight()) / 2 - starship.getYPos();
-				if (starshipPosY > SCREEN_WIDTH)
-				{
-					starshipPosX = 0;
-				}
-				//gStarshipTexture.render(starshipPosX, starshipPosY, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
-				gStarshipTexture.render(SCREEN_WIDTH-20, SCREEN_HEIGHT-20, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
+				space.updateSpace();
+				SpacePoint ssPos = space.getStarshipPosition();
+				gStarshipTexture.render(ssPos.X, ssPos.Y, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
 
 				//Render text
 				if (!gFPSTextTexture.loadFromRenderedText(starship.getDebugText().str().c_str(), textColor, gRenderer, gFont))

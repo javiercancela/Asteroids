@@ -8,11 +8,11 @@ public:
 	Space(int spaceWidth, int spaceHeight, int spaceshipSize, Starship* starship);
 
 	void updateSpace();
+	SpacePoint getStarshipPosition();
 
 private:
 	Starship* mStarship;
-	Uint8 mSsXPos;
-	Uint8 mSsYPos;
+	SpacePoint mSsPos;
 	int mSpaceWidth;
 	int mSpaceHeight;
 	int mSpaceshipSize;
