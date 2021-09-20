@@ -6,9 +6,6 @@ const double Starship::baseThrust = 0.1;
 
 Starship::Starship()
 {
-	mXPos = 0;
-	mYPos = 0;
-
 	mStarshipDirection = 0;
 	mMovementDirection = 0;
 	mSpeed = 0;
@@ -55,20 +52,12 @@ double Starship::getStarshipDirection()
 	return mStarshipDirection;
 }
 
-Uint8 Starship::getXPos()
+SpacePoint Starship::getPositionChange()
 {
-	return mXPos;
-}
-
-Uint8 Starship::getYPos()
-{
-	return mYPos;
-}
-
-void Starship::calculatePosition()
-{
-	mXPos += mSpeed * cos(mMovementDirection * PI / 180);
-	mYPos -= mSpeed * sin(mMovementDirection * PI / 180);
+	SpacePoint spacePoint;
+	spacePoint.X += mSpeed * cos(mMovementDirection * PI / 180);
+	spacePoint.Y -= mSpeed * sin(mMovementDirection * PI / 180);
+	return spacePoint;
 }
 
 std::stringstream Starship::getDebugText()

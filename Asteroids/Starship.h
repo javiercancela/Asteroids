@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <cmath>
 #include <sstream>
+#include "SpacePoint.h"
 
 class Starship
 {
@@ -12,16 +13,11 @@ public:
 	void thrust();
 
 	double getStarshipDirection();
-	Uint8 getXPos();
-	Uint8 getYPos();
 
-	void calculatePosition();
+	SpacePoint getPositionChange();
 	std::stringstream getDebugText();
 
 private:
-	double mXPos;
-	double mYPos;
-
 	double mMovementDirection;
 	double mStarshipDirection;
 	double mSpeed;

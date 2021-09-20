@@ -235,7 +235,8 @@ int main(int argc, char* args[])
 				{
 					starshipPosX = 0;
 				}
-				gStarshipTexture.render(starshipPosX, starshipPosY, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
+				//gStarshipTexture.render(starshipPosX, starshipPosY, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
+				gStarshipTexture.render(SCREEN_WIDTH-20, SCREEN_HEIGHT-20, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
 
 				//Render text
 				if (!gFPSTextTexture.loadFromRenderedText(starship.getDebugText().str().c_str(), textColor, gRenderer, gFont))
