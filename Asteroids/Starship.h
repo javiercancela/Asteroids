@@ -22,4 +22,5 @@ private:
 	double mStarshipDirection;
 	double mSpeed;
 	static const double baseThrust;
+	static const double maxSpeed;
 };

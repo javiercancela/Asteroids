@@ -3,6 +3,7 @@
 #define PI 3.14159265
 
 const double Starship::baseThrust = 0.1;
+const double Starship::maxSpeed = 10;
 
 Starship::Starship()
 {
@@ -37,6 +38,7 @@ void Starship::thrust()
 
 	mSpeed = sqrt(pow(newSpeedX, 2.0) + pow(newSpeedY, 2.0));
 	mMovementDirection = atan2(newSpeedY, newSpeedX) * 180 / PI;
+	mSpeed = (mSpeed > maxSpeed ? maxSpeed : mSpeed);
 	if (mMovementDirection > 360)
 	{
 		mMovementDirection -= 360;
