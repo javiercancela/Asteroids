@@ -34,6 +34,7 @@ TTF_Font* gFont = NULL;
 
 //Scene texture
 LTexture gStarshipTexture;
+LTexture gStarshipThrustTexture;
 LTexture gFPSTextTexture;
 
 SDL_Renderer* gRenderer = NULL;
@@ -105,8 +106,15 @@ bool loadMedia()
 	//Loading success flag
 	bool success = true;
 
-	//Load arrow
+	//Load starship
 	if (!gStarshipTexture.loadFromFile("Resources/starship.png", gRenderer))
+	{
+		printf("Failed to load arrow texture!\n");
+		success = false;
+	}
+
+	//Load starship thrust
+	if (!gStarshipThrustTexture.loadFromFile("Resources/starship-thrust.png", gRenderer))
 	{
 		printf("Failed to load arrow texture!\n");
 		success = false;
@@ -128,6 +136,7 @@ void close()
 {
 	//Free loaded images
 	gStarshipTexture.free();
+	gStarshipThrustTexture.free();
 	gFPSTextTexture.free();
 
 	//Destroy window	
@@ -172,6 +181,9 @@ int main(int argc, char* args[])
 			// The frames per second timer
 			LTimer fpsTimer;
 
+			// This texture will hold both the starship and the thrusted starship
+			LTexture* starshipTexture;
+
 			// In memory text stream
 			std::stringstream timeText;
 
@@ -206,6 +218,11 @@ int main(int argc, char* args[])
 				if (kb[SDL_SCANCODE_UP] > 0)
 				{
 					starship.thrust();
+					starshipTexture = &gStarshipThrustTexture;
+				}
+				else
+				{
+					starshipTexture = &gStarshipTexture;
 				}
 
 				// Calculate and correct fps
@@ -228,7 +245,7 @@ int main(int argc, char* args[])
 				//Render starship
 				space.updateSpace();
 				SpacePoint ssPos = space.getStarshipPosition();
-				gStarshipTexture.render(ssPos.X, ssPos.Y, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
+				starshipTexture->render(ssPos.X, ssPos.Y, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
 
 				timeText << starship.getDebugText().str() << " - XPos: " << ssPos.X << " - YPos: " << ssPos.Y;
 
