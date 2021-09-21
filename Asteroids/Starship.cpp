@@ -56,7 +56,7 @@ SpacePoint Starship::getPositionChange()
 {
 	SpacePoint spacePoint;
 	spacePoint.X += mSpeed * cos(mMovementDirection * PI / 180);
-	spacePoint.Y -= mSpeed * sin(mMovementDirection * PI / 180);
+	spacePoint.Y += mSpeed * sin(mMovementDirection * PI / 180);
 	return spacePoint;
 }
 

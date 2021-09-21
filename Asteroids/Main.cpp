@@ -14,8 +14,8 @@
 #include "Space.h"
 
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+const int SCREEN_WIDTH = 1600;
+const int SCREEN_HEIGHT = 900;
 
 //Starts up SDL and creates window
 bool init();
@@ -113,7 +113,7 @@ bool loadMedia()
 	}
 
 	//Open the font
-	gFont = TTF_OpenFont("Resources/lazy.ttf", 28);
+	gFont = TTF_OpenFont("Resources/lazy.ttf", 14);
 	if (gFont == NULL)
 	{
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -217,7 +217,7 @@ int main(int argc, char* args[])
 
 				// Set text
 				timeText.str("");
-				timeText << "Average FPS: " << avgFPS;
+				//timeText << "Average FPS: " << avgFPS;
 
 
 
@@ -230,8 +230,10 @@ int main(int argc, char* args[])
 				SpacePoint ssPos = space.getStarshipPosition();
 				gStarshipTexture.render(ssPos.X, ssPos.Y, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
 
+				timeText << starship.getDebugText().str() << " - XPos: " << ssPos.X << " - YPos: " << ssPos.Y;
+
 				//Render text
-				if (!gFPSTextTexture.loadFromRenderedText(starship.getDebugText().str().c_str(), textColor, gRenderer, gFont))
+				if (!gFPSTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor, gRenderer, gFont))
 				//if (!gFPSTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor, gRenderer, gFont))
 				{
 					printf("Unable to render FPS texture!\n");

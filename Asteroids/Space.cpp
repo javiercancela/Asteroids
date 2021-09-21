@@ -19,9 +19,17 @@ void Space::updateSpace()
 	{
 		mSsPos.X = mSsPos.X - mSpaceWidth;
 	}
+	else if (mSsPos.X < 0)
+	{
+		mSsPos.X = mSsPos.X + mSpaceWidth;
+	}
 	if (mSsPos.Y > mSpaceHeight)
 	{
 		mSsPos.Y = mSsPos.Y - mSpaceHeight;
+	}
+	else if (mSsPos.Y < 0)
+	{
+		mSsPos.Y = mSsPos.Y + mSpaceHeight;
 	}
 }
 
