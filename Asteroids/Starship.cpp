@@ -49,6 +49,12 @@ void Starship::thrust()
 	}
 }
 
+Bullet Starship::shoot()
+{
+	Bullet bullet(mStarshipDirection);
+	return bullet;
+}
+
 double Starship::getStarshipDirection()
 {
 	return mStarshipDirection;

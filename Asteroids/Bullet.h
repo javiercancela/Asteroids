@@ -1,5 +1,6 @@
 #pragma once
 #include "SpacePoint.h"
+#include "Bullet.h"
 
 class Bullet
 {

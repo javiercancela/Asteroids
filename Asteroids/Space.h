@@ -1,6 +1,7 @@
 #pragma once
 #include "Starship.h"
 #include "SpacePoint.h"
+#include <vector>
 
 class Space
 {
@@ -9,6 +10,7 @@ public:
 
 	void updateSpace();
 	SpacePoint getStarshipPosition();
+	void addBullet(Bullet bullet);
 
 private:
 	Starship* mStarship;
@@ -16,5 +18,5 @@ private:
 	int mSpaceWidth;
 	int mSpaceHeight;
 	int mSpaceshipSize;
-
+	std::vector<Bullet> mBullets;
 };

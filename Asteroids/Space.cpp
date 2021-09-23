@@ -38,3 +38,7 @@ SpacePoint Space::getStarshipPosition()
 	return mSsPos;
 }
 
+void Space::addBullet(Bullet bullet)
+{
+	mBullets.push_back(bullet);;
+}

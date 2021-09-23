@@ -3,6 +3,7 @@
 #include <cmath>
 #include <sstream>
 #include "SpacePoint.h"
+#include "Bullet.h"
 
 class Starship
 {
@@ -11,7 +12,7 @@ public:
 
 	void rotate(double degrees);
 	void thrust();
-
+	Bullet shoot();
 	double getStarshipDirection();
 
 	SpacePoint getPositionChange();
