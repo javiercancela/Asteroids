@@ -5,11 +5,13 @@
 const double Starship::baseThrust = 0.1;
 const double Starship::maxSpeed = 10;
 
-Starship::Starship()
+Starship::Starship(int xPos, int yPos)
 {
 	mStarshipDirection = 0;
 	mMovementDirection = 0;
 	mSpeed = 0;
+	mPosition.X = xPos;
+	mPosition.Y = yPos;
 }
 
 void Starship::rotate(double degrees)
@@ -51,7 +53,10 @@ void Starship::thrust()
 
 Bullet Starship::shoot()
 {
-	Bullet bullet(mStarshipDirection);
+	double gunX = 20 * cos(mStarshipDirection * PI / 180);
+	double gunY = 20 * sin(mStarshipDirection * PI / 180);
+
+	Bullet bullet(mStarshipDirection, mPosition.X + gunX, mPosition.Y + gunY);
 	return bullet;
 }
 
@@ -62,10 +67,21 @@ double Starship::getStarshipDirection()
 
 SpacePoint Starship::getPositionChange()
 {
-	SpacePoint spacePoint;
-	spacePoint.X += mSpeed * cos(mMovementDirection * PI / 180);
-	spacePoint.Y += mSpeed * sin(mMovementDirection * PI / 180);
-	return spacePoint;
+	SpacePoint starshipMovement;
+	starshipMovement.X += mSpeed * cos(mMovementDirection * PI / 180);
+	starshipMovement.Y += mSpeed * sin(mMovementDirection * PI / 180);
+
+	return starshipMovement;
+}
+
+SpacePoint Starship::getPosition()
+{
+	return mPosition;
+}
+
+void Starship::setPosition(SpacePoint position)
+{
+	mPosition = position;
 }
 
 std::stringstream Starship::getDebugText()
@@ -75,3 +91,10 @@ std::stringstream Starship::getDebugText()
 	return debugText;
 }
 
+SpacePoint Starship::getGunPosition()
+{
+	SpacePoint spacePoint;
+	spacePoint.X += 20 * cos(mStarshipDirection * PI / 180);
+	spacePoint.Y += 20 * sin(mStarshipDirection * PI / 180);
+	return spacePoint;
+}

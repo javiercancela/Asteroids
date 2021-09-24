@@ -8,7 +8,7 @@
 class Starship
 {
 public:
-	Starship();
+	Starship(int xPos, int yPos);
 
 	void rotate(double degrees);
 	void thrust();
@@ -16,11 +16,15 @@ public:
 	double getStarshipDirection();
 
 	SpacePoint getPositionChange();
+	SpacePoint getPosition();
+	void setPosition(SpacePoint position);
+	SpacePoint getGunPosition();
 	std::stringstream getDebugText();
 
 private:
 	double mMovementDirection;
 	double mStarshipDirection;
+	SpacePoint mPosition;
 	double mSpeed;
 	static const double baseThrust;
 	static const double maxSpeed;

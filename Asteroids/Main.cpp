@@ -14,8 +14,8 @@
 #include "Space.h"
 
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+const int SCREEN_WIDTH = 1600;
+const int SCREEN_HEIGHT = 900;
 
 //Starts up SDL and creates window
 bool init();
@@ -169,6 +169,8 @@ int main(int argc, char* args[])
 			//Main loop flag
 			bool quit = false;
 
+			bool bulletShot = false;
+
 			//Event handler
 			SDL_Event e;
 
@@ -192,8 +194,10 @@ int main(int argc, char* args[])
 			fpsTimer.start();
 
 			// Create starship and space
-			Starship starship;
+			Starship starship(SCREEN_WIDTH / 2 - 20, SCREEN_HEIGHT / 2 - 20);
 			Space space(SCREEN_WIDTH, SCREEN_HEIGHT, 40, &starship);
+
+			int shots = 0;
 
 			//While application is running
 			while (!quit)
@@ -225,6 +229,17 @@ int main(int argc, char* args[])
 					starshipTexture = &gStarshipTexture;
 				}
 
+				if (kb[SDL_SCANCODE_SPACE] > 0 && !bulletShot)
+				{
+					space.addBullet(starship.shoot());
+					bulletShot = true;
+					shots++;
+				}
+				else if (kb[SDL_SCANCODE_SPACE] == 0 && bulletShot)
+				{
+					bulletShot = false;
+				}
+
 				// Calculate and correct fps
 				float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
 				if (avgFPS > 2000000)
@@ -242,12 +257,22 @@ int main(int argc, char* args[])
 				SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0xFF);
 				SDL_RenderClear(gRenderer);
 
+				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+				
+
 				//Render starship
 				space.updateSpace();
-				SpacePoint ssPos = space.getStarshipPosition();
+				SpacePoint ssPos = space.getStarship()->getPosition();
 				starshipTexture->render(ssPos.X, ssPos.Y, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
+	
+				for (auto bullet : space.getBullets())
+				{
+					SDL_RenderDrawPointF(gRenderer, bullet.getPosition().X, bullet.getPosition().Y);
+				}
+				
 
-				timeText << starship.getDebugText().str() << " - XPos: " << ssPos.X << " - YPos: " << ssPos.Y;
+				timeText << "Shots: " << bulletShot;
 
 				//Render text
 				if (!gFPSTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor, gRenderer, gFont))

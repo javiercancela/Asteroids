@@ -5,11 +5,14 @@
 class Bullet
 {
 public:
-	Bullet(double direction);
+	Bullet(double direction, int xPos, int yPos);
 
 	SpacePoint getPositionChange();
+	SpacePoint getPosition();
+	void setPosition(SpacePoint position);
 
 private:
 	double mDirection;
+	SpacePoint mPosition;
 	static const double speed;
 };

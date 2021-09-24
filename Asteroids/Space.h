@@ -9,9 +9,9 @@ public:
 	Space(int spaceWidth, int spaceHeight, int spaceshipSize, Starship* starship);
 
 	void updateSpace();
-	SpacePoint getStarshipPosition();
 	void addBullet(Bullet bullet);
-
+	Starship* getStarship();
+	std::vector<Bullet> getBullets();
 private:
 	Starship* mStarship;
 	SpacePoint mSsPos;
@@ -19,4 +19,6 @@ private:
 	int mSpaceHeight;
 	int mSpaceshipSize;
 	std::vector<Bullet> mBullets;
+	void updateStarship();
+	void updateBullets();
 };
