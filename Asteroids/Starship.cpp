@@ -53,8 +53,10 @@ void Starship::thrust()
 
 Bullet Starship::shoot()
 {
-	double gunX = 20 * cos(mStarshipDirection * PI / 180);
-	double gunY = 20 * sin(mStarshipDirection * PI / 180);
+	//double gunX = 20;
+	//double gunY = 20;
+	double gunX = 20 * cos(mStarshipDirection * PI / 180) + 20;
+	double gunY = 20 * sin(mStarshipDirection * PI / 180) + 20;
 
 	Bullet bullet(mStarshipDirection, mPosition.X + gunX, mPosition.Y + gunY);
 	return bullet;
