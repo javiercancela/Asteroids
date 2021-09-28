@@ -1,18 +1,9 @@
 #pragma once
 #include "SpacePoint.h"
-#include "Bullet.h"
+#include "SpaceObject.h"	
 
-class Bullet
+class Bullet : public SpaceObject
 {
 public:
 	Bullet(double direction, int xPos, int yPos);
-
-	SpacePoint getPositionChange();
-	SpacePoint getPosition();
-	void setPosition(SpacePoint position);
-
-private:
-	double mDirection;
-	SpacePoint mPosition;
-	static const double speed;
 };
