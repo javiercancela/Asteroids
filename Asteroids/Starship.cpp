@@ -7,9 +7,8 @@ const double Starship::maxSpeed = 10;
 
 Starship::Starship(int xPos, int yPos)
 {
+	mDirection = 0.0;
 	mStarshipDirection = 0;
-	mMovementDirection = 0;
-	mSpeed = 0;
 	mPosition.X = xPos;
 	mPosition.Y = yPos;
 }
@@ -29,8 +28,8 @@ void Starship::rotate(double degrees)
 
 void Starship::thrust()
 {
-	double currentSpeedX = mSpeed * cos(mMovementDirection * PI / 180);
-	double currentSpeedY = mSpeed * sin(mMovementDirection * PI / 180);
+	double currentSpeedX = mSpeed * cos(mDirection * PI / 180);
+	double currentSpeedY = mSpeed * sin(mDirection * PI / 180);
 
 	double xThrust = baseThrust * cos(mStarshipDirection * PI / 180);
 	double yThrust = baseThrust * sin(mStarshipDirection * PI / 180);
@@ -39,22 +38,20 @@ void Starship::thrust()
 	double newSpeedY = currentSpeedY + yThrust;
 
 	mSpeed = sqrt(pow(newSpeedX, 2.0) + pow(newSpeedY, 2.0));
-	mMovementDirection = atan2(newSpeedY, newSpeedX) * 180 / PI;
+	mDirection = atan2(newSpeedY, newSpeedX) * 180 / PI;
 	mSpeed = (mSpeed > maxSpeed ? maxSpeed : mSpeed);
-	if (mMovementDirection > 360)
+	if (mDirection > 360)
 	{
-		mMovementDirection -= 360;
+		mDirection -= 360;
 	}
-	else if (mMovementDirection < 0)
+	else if (mDirection < 0)
 	{
-		mMovementDirection += 360;
+		mDirection += 360;
 	}
 }
 
 Bullet Starship::shoot()
 {
-	//double gunX = 20;
-	//double gunY = 20;
 	double gunX = 20 * cos(mStarshipDirection * PI / 180) + 20;
 	double gunY = 20 * sin(mStarshipDirection * PI / 180) + 20;
 
@@ -66,33 +63,6 @@ double Starship::getStarshipDirection()
 {
 	return mStarshipDirection;
 }
-
-SpacePoint Starship::getPositionChange()
-{
-	SpacePoint starshipMovement;
-	starshipMovement.X += mSpeed * cos(mMovementDirection * PI / 180);
-	starshipMovement.Y += mSpeed * sin(mMovementDirection * PI / 180);
-
-	return starshipMovement;
-}
-
-SpacePoint Starship::getPosition()
-{
-	return mPosition;
-}
-
-void Starship::setPosition(SpacePoint position)
-{
-	mPosition = position;
-}
-
-std::stringstream Starship::getDebugText()
-{
-	std::stringstream debugText;
-	debugText << "speed: " << mSpeed << " - movementDirection: " << mMovementDirection << " - starshipDirection: " << mStarshipDirection;
-	return debugText;
-}
-
 SpacePoint Starship::getGunPosition()
 {
 	SpacePoint spacePoint;

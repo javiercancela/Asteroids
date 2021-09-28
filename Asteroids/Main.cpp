@@ -14,8 +14,8 @@
 #include "Space.h"
 
 
-const int SCREEN_WIDTH = 1600;
-const int SCREEN_HEIGHT = 900;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
 //Starts up SDL and creates window
 bool init();

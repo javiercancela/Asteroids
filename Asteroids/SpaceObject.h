@@ -5,8 +5,6 @@ class SpaceObject
 {
 public:
 	SpaceObject();
-	SpaceObject(double direction, int xPos, int yPos);
-	SpaceObject(double direction, int xPos, int yPos, double speed);
 
 	SpacePoint getPositionChange();
 	SpacePoint getPosition();
