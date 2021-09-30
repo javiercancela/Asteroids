@@ -1,19 +1,22 @@
 #pragma once
 #include "Starship.h"
 #include "SpacePoint.h"
+#include "Asteroid.h"
 #include <vector>
 
 class Space
 {
 public:
-	Space(int spaceWidth, int spaceHeight, int spaceshipSize, Starship* starship);
+	Space(int spaceWidth, int spaceHeight, int spaceshipSize);
 
 	void updateSpace();
+	void render();
 	void addBullet(Bullet bullet);
-	Starship* getStarship();
 	std::vector<Bullet> getBullets();
+
 private:
-	Starship* mStarship;
+	Starship mStarship;
+	Asteroid* mAsteroid;
 	SpacePoint mSsPos;
 	int mSpaceWidth;
 	int mSpaceHeight;

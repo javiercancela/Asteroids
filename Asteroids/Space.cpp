@@ -1,6 +1,6 @@
 #include "Space.h"
 
-Space::Space(int spaceWidth, int spaceHeight, int spaceshipSize, Starship* starship)
+Space::Space(int spaceWidth, int spaceHeight, int spaceshipSize)
 {
 	mSpaceHeight = spaceHeight;
 	mSpaceWidth = spaceWidth;
@@ -8,7 +8,7 @@ Space::Space(int spaceWidth, int spaceHeight, int spaceshipSize, Starship* stars
 	
 	mSsPos.X = (mSpaceWidth - mSpaceshipSize) / 2;
 	mSsPos.Y = (mSpaceHeight - mSpaceshipSize) / 2;
-	mStarship = starship;
+	mStarship.setPosition()
 }
 
 void Space::updateSpace()
@@ -17,9 +17,14 @@ void Space::updateSpace()
 	updateBullets();
 }
 
-Starship* Space::getStarship()
+void Space::render()
 {
-	return mStarship;
+	mStarship.render();
+
+	for (auto bullet : mBullets)
+	{
+		bullet.render();
+	}
 }
 
 std::vector<Bullet> Space::getBullets()
@@ -29,8 +34,8 @@ std::vector<Bullet> Space::getBullets()
 
 void Space::updateStarship()
 {
-	SpacePoint starshipMovement = mStarship->getPositionChange();
-	SpacePoint starshipPosition = mStarship->getPosition();
+	SpacePoint starshipMovement = mStarship.getPositionChange();
+	SpacePoint starshipPosition = mStarship.getPosition();
 	starshipPosition.add(starshipMovement);
 	if (starshipPosition.X > mSpaceWidth)
 	{
@@ -48,7 +53,7 @@ void Space::updateStarship()
 	{
 		starshipPosition.Y = starshipPosition.Y + mSpaceHeight;
 	}
-	mStarship->setPosition(starshipPosition);
+	mStarship.setPosition(starshipPosition);
 }
 
 void Space::updateBullets()
@@ -56,7 +61,7 @@ void Space::updateBullets()
 	auto bullet = mBullets.begin();
 	while (bullet != mBullets.end())
 	{
-		SpacePoint bulletMovement = bullet->getPositionChange();
+ 		SpacePoint bulletMovement = bullet->getPositionChange();
 		SpacePoint bulletPosition = bullet->getPosition();
 		bulletPosition.add(bulletMovement);
 		if (bulletPosition.X > mSpaceWidth || bulletPosition.X < 0  ||
@@ -73,5 +78,5 @@ void Space::updateBullets()
 }
 void Space::addBullet(Bullet bullet)
 {
-	mBullets.push_back(bullet);;
+	mBullets.push_back(bullet);
 }

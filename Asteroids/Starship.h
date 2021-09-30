@@ -8,17 +8,20 @@
 class Starship : public SpaceObject
 {
 public:
-	Starship(int xPos, int yPos);
+	Starship(SDL_Renderer* renderer);
+	~Starship();
 
-	void rotate(double degrees);
 	void thrust();
+	void stopThrust();
 	Bullet shoot();
-	double getStarshipDirection();
-
 	SpacePoint getGunPosition();
+	void render();
 
 private:
-	double mStarshipDirection;
 	static const double baseThrust;
 	static const double maxSpeed;
+	LTexture mThrustTexture;
+	bool isThrusting = false;
+	
+	void loadTexture();
 };

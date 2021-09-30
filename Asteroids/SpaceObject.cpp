@@ -2,10 +2,16 @@
 #include <cmath>
 #define PI 3.14159265
 
-SpaceObject::SpaceObject() : mSpeed(0.0), mDirection(0.0), mPosition(SpacePoint())
+SpaceObject::SpaceObject()
 {
 
 }
+
+SpaceObject::~SpaceObject()
+{
+	mTexture.free();
+}
+
 
 SpacePoint SpaceObject::getPositionChange()
 {
@@ -23,4 +29,27 @@ SpacePoint SpaceObject::getPosition()
 void SpaceObject::setPosition(SpacePoint position)
 {
 	mPosition = position;
+}
+
+double SpaceObject::getOrientation()
+{
+	return mOrientation;
+}
+
+void SpaceObject::rotate(int rotationDir)
+{
+	mOrientation += rotationDir * mRotationSpeed;
+	if (mOrientation > 360)
+	{
+		mOrientation -= 360;
+	}
+	else if (mOrientation < 0)
+	{
+		mOrientation += 360;
+	}
+}
+
+void SpaceObject::render()
+{
+	mTexture.render(mPosition.X, mPosition.Y, mRenderer, NULL, mOrientation, NULL, SDL_FLIP_NONE);
 }

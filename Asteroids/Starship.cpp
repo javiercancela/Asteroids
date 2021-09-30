@@ -5,34 +5,39 @@
 const double Starship::baseThrust = 0.1;
 const double Starship::maxSpeed = 10;
 
-Starship::Starship(int xPos, int yPos)
+Starship::Starship(SDL_Renderer* renderer)
 {
-	mDirection = 0.0;
-	mStarshipDirection = 0;
-	mPosition.X = xPos;
-	mPosition.Y = yPos;
+	mRenderer = renderer;
+	mRotationSpeed = 2; // Angular speed in degrees
+
+	loadTexture();
 }
 
-void Starship::rotate(double degrees)
+Starship::~Starship()
 {
-	mStarshipDirection += degrees;
-	if (mStarshipDirection > 360)
+	mThrustTexture.free();
+}
+
+void Starship::loadTexture()
+{
+	if (!mTexture.loadFromFile("Resources/starship.png", mRenderer))
 	{
-		mStarshipDirection -= 360;
+		printf("Failed to load starship texture!\n");
 	}
-	else if (mStarshipDirection < 0)
+	if (!mThrustTexture.loadFromFile("Resources/starship-thrust.png", mRenderer))
 	{
-		mStarshipDirection += 360;
+		printf("Failed to load starship thrust texture!\n");
 	}
 }
+
 
 void Starship::thrust()
 {
 	double currentSpeedX = mSpeed * cos(mDirection * PI / 180);
 	double currentSpeedY = mSpeed * sin(mDirection * PI / 180);
 
-	double xThrust = baseThrust * cos(mStarshipDirection * PI / 180);
-	double yThrust = baseThrust * sin(mStarshipDirection * PI / 180);
+	double xThrust = baseThrust * cos(mOrientation * PI / 180);
+	double yThrust = baseThrust * sin(mOrientation * PI / 180);
 
 	double newSpeedX = currentSpeedX + xThrust;
 	double newSpeedY = currentSpeedY + yThrust;
@@ -48,25 +53,43 @@ void Starship::thrust()
 	{
 		mDirection += 360;
 	}
+
+	isThrusting = true;
+}
+
+void Starship::stopThrust()
+{
+	isThrusting = false;
 }
 
 Bullet Starship::shoot()
 {
-	double gunX = 20 * cos(mStarshipDirection * PI / 180) + 20;
-	double gunY = 20 * sin(mStarshipDirection * PI / 180) + 20;
+	double gunX = 20 * cos(mOrientation * PI / 180) + 20;
+	double gunY = 20 * sin(mOrientation * PI / 180) + 20;
 
-	Bullet bullet(mStarshipDirection, mPosition.X + gunX, mPosition.Y + gunY);
+	Bullet bullet(mOrientation, mPosition.X + gunX, mPosition.Y + gunY, mRenderer);
 	return bullet;
 }
-
-double Starship::getStarshipDirection()
-{
-	return mStarshipDirection;
-}
+ 
 SpacePoint Starship::getGunPosition()
 {
 	SpacePoint spacePoint;
-	spacePoint.X += 20 * cos(mStarshipDirection * PI / 180);
-	spacePoint.Y += 20 * sin(mStarshipDirection * PI / 180);
+	spacePoint.X += 20 * cos(mOrientation * PI / 180);
+	spacePoint.Y += 20 * sin(mOrientation * PI / 180);
 	return spacePoint;
+}
+
+void Starship::render()
+{
+	LTexture* texture = NULL;
+	if (isThrusting)
+	{
+		texture = &mThrustTexture;
+	}
+	else
+	{
+		texture = &mTexture;
+	}
+	
+	texture->render(mPosition.X, mPosition.Y, mRenderer, NULL, mOrientation, NULL, SDL_FLIP_NONE);
 }

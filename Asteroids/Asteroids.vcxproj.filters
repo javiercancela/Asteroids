@@ -39,9 +39,24 @@
     <ClCompile Include="SpaceObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Asteroid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\starship.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\asteroid-l.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\asteroid-m.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\asteroid-s.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\starship-thrust.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
@@ -65,6 +80,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpaceObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Asteroid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

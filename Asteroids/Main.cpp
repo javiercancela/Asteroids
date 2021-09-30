@@ -8,7 +8,6 @@
 #include <string>
 #include <cmath>
 #include <sstream>
-#include "LTexture.h"
 #include "LTimer.h"
 #include "Starship.h"
 #include "Space.h"
@@ -32,11 +31,8 @@ SDL_Window* gWindow = NULL;
 //Globally used font
 TTF_Font* gFont = NULL;
 
-//Scene texture
-LTexture gStarshipTexture;
-LTexture gStarshipThrustTexture;
+//Scene renderer
 LTexture gFPSTextTexture;
-
 SDL_Renderer* gRenderer = NULL;
 
 
@@ -106,20 +102,6 @@ bool loadMedia()
 	//Loading success flag
 	bool success = true;
 
-	//Load starship
-	if (!gStarshipTexture.loadFromFile("Resources/starship.png", gRenderer))
-	{
-		printf("Failed to load arrow texture!\n");
-		success = false;
-	}
-
-	//Load starship thrust
-	if (!gStarshipThrustTexture.loadFromFile("Resources/starship-thrust.png", gRenderer))
-	{
-		printf("Failed to load arrow texture!\n");
-		success = false;
-	}
-
 	//Open the font
 	gFont = TTF_OpenFont("Resources/lazy.ttf", 14);
 	if (gFont == NULL)
@@ -134,11 +116,7 @@ bool loadMedia()
 
 void close()
 {
-	//Free loaded images
-	gStarshipTexture.free();
-	gStarshipThrustTexture.free();
 	gFPSTextTexture.free();
-
 	//Destroy window	
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
@@ -174,9 +152,6 @@ int main(int argc, char* args[])
 			//Event handler
 			SDL_Event e;
 
-			//Angle of rotation
-			double degrees_rot = 0;
-
 			// Set white color for text
 			SDL_Color textColor = { 255, 255, 255, 255 };
 
@@ -194,7 +169,7 @@ int main(int argc, char* args[])
 			fpsTimer.start();
 
 			// Create starship and space
-			Starship starship(SCREEN_WIDTH / 2 - 20, SCREEN_HEIGHT / 2 - 20);
+			Starship starship(SCREEN_WIDTH / 2 - 20, SCREEN_HEIGHT / 2 - 20, gRenderer);
 			Space space(SCREEN_WIDTH, SCREEN_HEIGHT, 40, &starship);
 
 			int shots = 0;
@@ -215,18 +190,16 @@ int main(int argc, char* args[])
 				const Uint8* kb = SDL_GetKeyboardState(NULL);
 
 				// Rotate starship
-				degrees_rot = (2 * -kb[SDL_SCANCODE_LEFT]) + (2 * kb[SDL_SCANCODE_RIGHT]);
-				starship.rotate(degrees_rot);
+				starship.rotate(kb[SDL_SCANCODE_RIGHT] - kb[SDL_SCANCODE_LEFT]);
 
 				// If UP pressed, thrust
 				if (kb[SDL_SCANCODE_UP] > 0)
 				{
 					starship.thrust();
-					starshipTexture = &gStarshipThrustTexture;
 				}
 				else
 				{
-					starshipTexture = &gStarshipTexture;
+					starship.stopThrust();
 				}
 
 				if (kb[SDL_SCANCODE_SPACE] > 0 && !bulletShot)
@@ -262,20 +235,12 @@ int main(int argc, char* args[])
 
 				//Render starship
 				space.updateSpace();
-				SpacePoint ssPos = space.getStarship()->getPosition();
-				starshipTexture->render(ssPos.X, ssPos.Y, gRenderer, NULL, starship.getStarshipDirection(), NULL, SDL_FLIP_NONE);
-	
-				for (auto bullet : space.getBullets())
-				{
-					SDL_RenderDrawPointF(gRenderer, bullet.getPosition().X, bullet.getPosition().Y);
-				}
-				
+				space.render();
 
 				timeText << "Shots: " << bulletShot;
 
 				//Render text
 				if (!gFPSTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor, gRenderer, gFont))
-				//if (!gFPSTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor, gRenderer, gFont))
 				{
 					printf("Unable to render FPS texture!\n");
 				}
