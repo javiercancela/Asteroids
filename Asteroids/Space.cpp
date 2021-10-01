@@ -4,11 +4,14 @@
 Space::Space(int asteroidsCount, SDL_Renderer* renderer)
 {
 	mStarship = new Starship(renderer);
+	mAsteroid = new Asteroid(0, 300, 300, renderer);
 
 	SpacePoint sp;
 	sp.X = (WINDOW_WIDTH - STARSHIP_SIZE) / 2;
 	sp.Y = (WINDOW_HEIGHT - STARSHIP_SIZE) / 2;
 	mStarship->setPosition(sp);
+
+	addAsteroids(asteroidsCount, renderer);
 }
 
 Space::~Space()
@@ -26,6 +29,7 @@ void Space::updateSpace()
 void Space::render()
 {
 	mStarship->render();
+	mAsteroid->render();
 
 	for (auto bullet : mBullets)
 	{
@@ -89,8 +93,8 @@ void Space::addAsteroids(int asteroidsCount, SDL_Renderer* renderer)
 	{
 		srand(time(NULL));
 		int direction = rand() % 360;
-		int x = 0;
-		int y = 0;
+		int x = 40;
+		int y = 40;
 		int axis = rand() % 2;
 		if (axis == 0)
 		{

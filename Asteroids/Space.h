@@ -22,6 +22,7 @@ public:
 	
 private:
 	Starship* mStarship;
+	Asteroid* mAsteroid;
 	std::vector<Bullet> mBullets;
 	std::vector<Asteroid> mAsteroids;
 	void updateStarship();
