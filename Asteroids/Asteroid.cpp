@@ -1,7 +1,8 @@
 #include "Asteroid.h"
 
-Asteroid::Asteroid(double xPos, double yPos, SDL_Renderer* renderer)
+Asteroid::Asteroid(double direction, double xPos, double yPos, SDL_Renderer* renderer)
 {
+	mDirection = direction;
 	mPosition.X = xPos;
 	mPosition.Y = yPos;
 	mRenderer = renderer;

@@ -4,6 +4,6 @@
 class Asteroid : public SpaceObject
 {
 public:
-	Asteroid(double xPos, double yPos, SDL_Renderer* renderer);
+	Asteroid(double direction, double xPos, double yPos, SDL_Renderer* renderer);
 	void loadTexture();
 };

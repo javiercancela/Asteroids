@@ -13,8 +13,7 @@
 #include "Space.h"
 
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+const int ASTEROIDS_COUNT = 5;
 
 //Starts up SDL and creates window
 bool init();
@@ -56,7 +55,7 @@ bool init()
 		}
 
 		//Create window
-		gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
 		if (gWindow == NULL)
 		{
 			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -158,9 +157,6 @@ int main(int argc, char* args[])
 			// The frames per second timer
 			LTimer fpsTimer;
 
-			// This texture will hold both the starship and the thrusted starship
-			LTexture* starshipTexture;
-
 			// In memory text stream
 			std::stringstream timeText;
 
@@ -169,10 +165,7 @@ int main(int argc, char* args[])
 			fpsTimer.start();
 
 			// Create starship and space
-			Starship starship(SCREEN_WIDTH / 2 - 20, SCREEN_HEIGHT / 2 - 20, gRenderer);
-			Space space(SCREEN_WIDTH, SCREEN_HEIGHT, 40, &starship);
-
-			int shots = 0;
+			Space space(ASTEROIDS_COUNT, gRenderer);
 
 			//While application is running
 			while (!quit)
@@ -190,23 +183,22 @@ int main(int argc, char* args[])
 				const Uint8* kb = SDL_GetKeyboardState(NULL);
 
 				// Rotate starship
-				starship.rotate(kb[SDL_SCANCODE_RIGHT] - kb[SDL_SCANCODE_LEFT]);
+				space.getStarship()->rotate(kb[SDL_SCANCODE_RIGHT] - kb[SDL_SCANCODE_LEFT]);
 
 				// If UP pressed, thrust
 				if (kb[SDL_SCANCODE_UP] > 0)
 				{
-					starship.thrust();
+					space.getStarship()->thrust();
 				}
 				else
 				{
-					starship.stopThrust();
+					space.getStarship()->stopThrust();
 				}
 
 				if (kb[SDL_SCANCODE_SPACE] > 0 && !bulletShot)
 				{
-					space.addBullet(starship.shoot());
+					space.addBullet(space.getStarship()->shoot());
 					bulletShot = true;
-					shots++;
 				}
 				else if (kb[SDL_SCANCODE_SPACE] == 0 && bulletShot)
 				{

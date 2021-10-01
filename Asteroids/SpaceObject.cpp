@@ -18,12 +18,18 @@ SpacePoint SpaceObject::getPositionChange()
 	SpacePoint spacePoint;
 	spacePoint.X += mSpeed * cos(mDirection * PI / 180);
 	spacePoint.Y += mSpeed * sin(mDirection * PI / 180);
+	mDirection += mSpeed;
 	return spacePoint;
 }
 
 SpacePoint SpaceObject::getPosition()
 {
 	return mPosition;
+}
+
+double SpaceObject::getDistance()
+{
+	return mDistance;
 }
 
 void SpaceObject::setPosition(SpacePoint position)

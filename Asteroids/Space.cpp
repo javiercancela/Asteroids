@@ -1,59 +1,49 @@
 #include "Space.h"
 
-Space::Space(int spaceWidth, int spaceHeight, int spaceshipSize)
+
+Space::Space(int asteroidsCount, SDL_Renderer* renderer)
 {
-	mSpaceHeight = spaceHeight;
-	mSpaceWidth = spaceWidth;
-	mSpaceshipSize = spaceshipSize;
-	
-	mSsPos.X = (mSpaceWidth - mSpaceshipSize) / 2;
-	mSsPos.Y = (mSpaceHeight - mSpaceshipSize) / 2;
-	mStarship.setPosition()
+	mStarship = new Starship(renderer);
+
+	SpacePoint sp;
+	sp.X = (WINDOW_WIDTH - STARSHIP_SIZE) / 2;
+	sp.Y = (WINDOW_HEIGHT - STARSHIP_SIZE) / 2;
+	mStarship->setPosition(sp);
+}
+
+Space::~Space()
+{
+	mStarship = NULL;
 }
 
 void Space::updateSpace()
 {
 	updateStarship();
 	updateBullets();
+	updateAsteroids();
 }
 
 void Space::render()
 {
-	mStarship.render();
+	mStarship->render();
 
 	for (auto bullet : mBullets)
 	{
 		bullet.render();
 	}
-}
 
-std::vector<Bullet> Space::getBullets()
-{
-	return mBullets;
+	for (auto asteroid : mAsteroids)
+	{
+		asteroid.render();
+	}
 }
 
 void Space::updateStarship()
 {
-	SpacePoint starshipMovement = mStarship.getPositionChange();
-	SpacePoint starshipPosition = mStarship.getPosition();
+	SpacePoint starshipMovement = mStarship->getPositionChange();
+	SpacePoint starshipPosition = mStarship->getPosition();
 	starshipPosition.add(starshipMovement);
-	if (starshipPosition.X > mSpaceWidth)
-	{
-		starshipPosition.X = starshipPosition.X - mSpaceWidth;
-	}
-	else if (starshipPosition.X < 0)
-	{
-		starshipPosition.X = starshipPosition.X + mSpaceWidth;
-	}
-	if (starshipPosition.Y > mSpaceHeight)
-	{
-		starshipPosition.Y = starshipPosition.Y - mSpaceHeight;
-	}
-	else if (starshipPosition.Y < 0)
-	{
-		starshipPosition.Y = starshipPosition.Y + mSpaceHeight;
-	}
-	mStarship.setPosition(starshipPosition);
+	mStarship->setPosition(starshipPosition);
 }
 
 void Space::updateBullets()
@@ -64,8 +54,7 @@ void Space::updateBullets()
  		SpacePoint bulletMovement = bullet->getPositionChange();
 		SpacePoint bulletPosition = bullet->getPosition();
 		bulletPosition.add(bulletMovement);
-		if (bulletPosition.X > mSpaceWidth || bulletPosition.X < 0  ||
-			bulletPosition.Y > mSpaceHeight || bulletPosition.Y < 0)
+		if (bullet->getDistance() > WINDOW_HEIGHT)
 		{
 			bullet = mBullets.erase(bullet);
 		}
@@ -76,7 +65,48 @@ void Space::updateBullets()
 		}
 	}
 }
+void Space::updateAsteroids()
+{
+	auto asteroid = mAsteroids.begin();
+	while (asteroid != mAsteroids.end())
+	{
+		asteroid->rotate(1);
+		SpacePoint asteroidMovement = asteroid->getPositionChange();
+		SpacePoint asteroidPosition = asteroid->getPosition();
+		asteroidPosition.add(asteroidMovement);
+		asteroid->setPosition(asteroidPosition);
+		asteroid++;
+	}
+}
 void Space::addBullet(Bullet bullet)
 {
 	mBullets.push_back(bullet);
+}
+
+void Space::addAsteroids(int asteroidsCount, SDL_Renderer* renderer)
+{
+	for (int i = 0; i < asteroidsCount; i++)
+	{
+		srand(time(NULL));
+		int direction = rand() % 360;
+		int x = 0;
+		int y = 0;
+		int axis = rand() % 2;
+		if (axis == 0)
+		{
+			x = rand() % WINDOW_WIDTH;
+		}
+		else
+		{
+			y = rand() % WINDOW_HEIGHT;
+		}
+
+		Asteroid asteroid(direction, x, y, renderer);
+		mAsteroids.push_back(asteroid);
+	}
+}
+
+Starship* Space::getStarship()
+{
+	return mStarship;
 }

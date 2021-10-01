@@ -2,8 +2,8 @@
 
 #define PI 3.14159265
 
-const double Starship::baseThrust = 0.1;
-const double Starship::maxSpeed = 10;
+const double Starship::baseThrust = 0.02;
+const double Starship::maxSpeed = 5;
 
 Starship::Starship(SDL_Renderer* renderer)
 {
