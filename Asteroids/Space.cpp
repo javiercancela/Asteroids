@@ -4,7 +4,7 @@
 Space::Space(int asteroidsCount, SDL_Renderer* renderer)
 {
 	mStarship = new Starship(renderer);
-	mAsteroid = new Asteroid(0, 300, 300, renderer);
+	
 
 	SpacePoint sp;
 	sp.X = (WINDOW_WIDTH - STARSHIP_SIZE) / 2;
@@ -31,15 +31,16 @@ void Space::render()
 	mStarship->render();
 	mAsteroid->render();
 
+
 	for (auto bullet : mBullets)
 	{
 		bullet.render();
 	}
 
-	for (auto asteroid : mAsteroids)
-	{
-		asteroid.render();
-	}
+	//for (auto asteroid : mAsteroids)
+	//{
+	//	asteroid.render();
+	//}
 }
 
 void Space::updateStarship()
@@ -71,16 +72,21 @@ void Space::updateBullets()
 }
 void Space::updateAsteroids()
 {
-	auto asteroid = mAsteroids.begin();
-	while (asteroid != mAsteroids.end())
-	{
-		asteroid->rotate(1);
-		SpacePoint asteroidMovement = asteroid->getPositionChange();
-		SpacePoint asteroidPosition = asteroid->getPosition();
-		asteroidPosition.add(asteroidMovement);
-		asteroid->setPosition(asteroidPosition);
-		asteroid++;
-	}
+	//auto asteroid = mAsteroids.begin();
+	//while (asteroid != mAsteroids.end())
+	//{
+	//	asteroid->rotate(1);
+	//	SpacePoint asteroidMovement = asteroid->getPositionChange();
+	//	SpacePoint asteroidPosition = asteroid->getPosition();
+	//	asteroidPosition.add(asteroidMovement);
+	//	asteroid->setPosition(asteroidPosition);
+	//	asteroid++;
+	//}
+	mAsteroid->rotate(1);
+	SpacePoint asteroidMovement = mAsteroid->getPositionChange();
+	SpacePoint asteroidPosition = mAsteroid->getPosition();
+	asteroidPosition.add(asteroidMovement);
+	mAsteroid->setPosition(asteroidPosition);
 }
 void Space::addBullet(Bullet bullet)
 {
@@ -91,10 +97,11 @@ void Space::addAsteroids(int asteroidsCount, SDL_Renderer* renderer)
 {
 	for (int i = 0; i < asteroidsCount; i++)
 	{
-		srand(time(NULL));
+		time_t tmp = time(NULL);
+		srand(tmp + 10*i);
 		int direction = rand() % 360;
-		int x = 40;
-		int y = 40;
+		int x = 100;
+		int y = 100;
 		int axis = rand() % 2;
 		if (axis == 0)
 		{
@@ -105,9 +112,10 @@ void Space::addAsteroids(int asteroidsCount, SDL_Renderer* renderer)
 			y = rand() % WINDOW_HEIGHT;
 		}
 
-		Asteroid asteroid(direction, x, y, renderer);
+		Asteroid* asteroid = new Asteroid(direction, x, y, renderer);
 		mAsteroids.push_back(asteroid);
 	}
+	mAsteroid = mAsteroids[0];
 }
 
 Starship* Space::getStarship()

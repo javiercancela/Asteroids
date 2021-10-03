@@ -6,8 +6,8 @@ Asteroid::Asteroid(double direction, double xPos, double yPos, SDL_Renderer* ren
 	mPosition.X = xPos;
 	mPosition.Y = yPos;
 	mRenderer = renderer;
-	mRotationSpeed = 10; // Angular speed in degrees
-	mSpeed = 4;
+	mRotationSpeed = 0.5; // Angular speed in degrees
+	mSpeed = 1;
 
 	loadTexture();
 }

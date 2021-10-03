@@ -64,8 +64,8 @@ void Starship::stopThrust()
 
 Bullet Starship::shoot()
 {
-	double gunX = 20 * cos(mOrientation * PI / 180) + 20;
-	double gunY = 20 * sin(mOrientation * PI / 180) + 20;
+	double gunX = 20 * cos(mOrientation * PI / 180) + (STARSHIP_SIZE / 2);
+	double gunY = 20 * sin(mOrientation * PI / 180) + (STARSHIP_SIZE / 2);
 
 	Bullet bullet(mOrientation, mPosition.X + gunX, mPosition.Y + gunY, mRenderer);
 	return bullet;

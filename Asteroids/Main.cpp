@@ -13,7 +13,7 @@
 #include "Space.h"
 
 
-const int ASTEROIDS_COUNT = 5;
+const int ASTEROIDS_COUNT = 1;
 
 //Starts up SDL and creates window
 bool init();
@@ -54,7 +54,7 @@ bool init()
 			printf("Warning: Linear texture filtering not enabled!");
 		}
 
-		//Create window
+		//Create game windows, with default position
 		gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
 		if (gWindow == NULL)
 		{
@@ -63,7 +63,7 @@ bool init()
 		}
 		else
 		{
-			//Create vsynced renderer for window
+			//Create vsynced renderer for window, so rendering is synchronized with the refresh rate
 			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 			if (gRenderer == NULL)
 			{
@@ -109,7 +109,6 @@ bool loadMedia()
 		success = false;
 	}
 
-
 	return success;
 }
 
@@ -146,6 +145,7 @@ int main(int argc, char* args[])
 			//Main loop flag
 			bool quit = false;
 
+			// Control weather bullet is shot after pressing the space bar
 			bool bulletShot = false;
 
 			//Event handler
@@ -182,7 +182,8 @@ int main(int argc, char* args[])
 
 				const Uint8* kb = SDL_GetKeyboardState(NULL);
 
-				// Rotate starship
+				// Rotate starship, left (-1) o right (+1) 
+				// (kb[KEY] equals 1 if KEY is pressed
 				space.getStarship()->rotate(kb[SDL_SCANCODE_RIGHT] - kb[SDL_SCANCODE_LEFT]);
 
 				// If UP pressed, thrust
@@ -192,9 +193,12 @@ int main(int argc, char* args[])
 				}
 				else
 				{
+					// Stop thrusting to change the texture to the normal spaceship
 					space.getStarship()->stopThrust();
 				}
 
+				// We control bulletShot so only one bullet is shot we keep the key pressed 
+				// for several frames
 				if (kb[SDL_SCANCODE_SPACE] > 0 && !bulletShot)
 				{
 					space.addBullet(space.getStarship()->shoot());
@@ -218,15 +222,17 @@ int main(int argc, char* args[])
 
 
 
-				//Clear screen
+				//Clear screen with black color
 				SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0xFF);
 				SDL_RenderClear(gRenderer);
+				// Back to drawing with white
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
 			
 
-				//Render starship
+				// Calcualte movements for all the objects
 				space.updateSpace();
+				// Render everything
 				space.render();
 
 				timeText << "Shots: " << bulletShot;

@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define STARSHIP_SIZE 40
-
 class Space
 {
 public:
@@ -24,7 +22,7 @@ private:
 	Starship* mStarship;
 	Asteroid* mAsteroid;
 	std::vector<Bullet> mBullets;
-	std::vector<Asteroid> mAsteroids;
+	std::vector<Asteroid*> mAsteroids;
 	void updateStarship();
 	void updateBullets();
 	void updateAsteroids();

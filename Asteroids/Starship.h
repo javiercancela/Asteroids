@@ -5,6 +5,9 @@
 #include "SpacePoint.h"
 #include "Bullet.h"
 
+#define STARSHIP_SIZE 24
+
+
 class Starship : public SpaceObject
 {
 public:
