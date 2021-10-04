@@ -29,18 +29,16 @@ void Space::updateSpace()
 void Space::render()
 {
 	mStarship->render();
-	mAsteroid->render();
-
 
 	for (auto bullet : mBullets)
 	{
 		bullet.render();
 	}
 
-	//for (auto asteroid : mAsteroids)
-	//{
-	//	asteroid.render();
-	//}
+	for (auto asteroid : mAsteroids)
+	{
+		asteroid->render();
+	}
 }
 
 void Space::updateStarship()
@@ -72,21 +70,16 @@ void Space::updateBullets()
 }
 void Space::updateAsteroids()
 {
-	//auto asteroid = mAsteroids.begin();
-	//while (asteroid != mAsteroids.end())
-	//{
-	//	asteroid->rotate(1);
-	//	SpacePoint asteroidMovement = asteroid->getPositionChange();
-	//	SpacePoint asteroidPosition = asteroid->getPosition();
-	//	asteroidPosition.add(asteroidMovement);
-	//	asteroid->setPosition(asteroidPosition);
-	//	asteroid++;
-	//}
-	mAsteroid->rotate(1);
-	SpacePoint asteroidMovement = mAsteroid->getPositionChange();
-	SpacePoint asteroidPosition = mAsteroid->getPosition();
-	asteroidPosition.add(asteroidMovement);
-	mAsteroid->setPosition(asteroidPosition);
+	auto asteroid = mAsteroids.begin();
+	while (asteroid != mAsteroids.end())
+	{
+		(*asteroid)->rotate(1);
+		SpacePoint asteroidMovement = (*asteroid)->getPositionChange();
+		SpacePoint asteroidPosition = (*asteroid)->getPosition();
+		asteroidPosition.add(asteroidMovement);
+		(*asteroid)->setPosition(asteroidPosition);
+		asteroid++;
+	}
 }
 void Space::addBullet(Bullet bullet)
 {
@@ -115,7 +108,6 @@ void Space::addAsteroids(int asteroidsCount, SDL_Renderer* renderer)
 		Asteroid* asteroid = new Asteroid(direction, x, y, renderer);
 		mAsteroids.push_back(asteroid);
 	}
-	mAsteroid = mAsteroids[0];
 }
 
 Starship* Space::getStarship()
