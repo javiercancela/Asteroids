@@ -12,11 +12,15 @@ public:
 
 	SpacePoint getPositionChange();
 	SpacePoint getPosition();
+	int getWidth();
+	int getHeight();
 	double getDistance();
 	void setPosition(SpacePoint position);
 	double getOrientation();
 	void rotate(int rotationDir);
 	void render();
+	bool collidesWithObject(double x, double y, int width, int height);
+
 
 protected:
 	double mDirection = 0.0;

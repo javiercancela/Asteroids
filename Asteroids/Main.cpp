@@ -12,25 +12,6 @@
 #include "Starship.h"
 #include "Space.h"
 
-// Box detection
-//bool axis_check(int a_min, int a_max, int b_min, int b_max)
-//{
-//	if (a_max < b_min || b_max < a_min) return false;
-//	else return true;
-//}
-//
-//bool box_collision(int a_x_min, int a_x_max, int a_y_min, int a_y_max,
-//	int b_x_min, int b_x_max, int b_y_min, int b_y_max)
-//{
-//	if (axis_check(a_x_min, a_x_max, b_x_min, b_x_max)
-//		&& axis_check(a_y_min, a_y_max, b_y_min, b_y_max))
-//		return true;
-//	else
-//		return false;
-//}
-
-
-
 const int ASTEROIDS_COUNT = 5;
 
 //Starts up SDL and creates window

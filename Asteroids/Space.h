@@ -24,5 +24,6 @@ private:
 	std::vector<Asteroid*> mAsteroids;
 	void updateStarship();
 	void updateBullets();
+	bool checkHitAsteroid(Bullet bullet);
 	void updateAsteroids();
 };

@@ -27,6 +27,16 @@ SpacePoint SpaceObject::getPosition()
 	return mPosition;
 }
 
+int SpaceObject::getWidth()
+{
+	return mTexture.getWidth();
+}
+
+int SpaceObject::getHeight()
+{
+	return mTexture.getHeight();
+}
+
 double SpaceObject::getDistance()
 {
 	return mDistance;
@@ -59,3 +69,15 @@ void SpaceObject::render()
 {
 	mTexture.render(mPosition.X, mPosition.Y, mRenderer, NULL, mOrientation, NULL, SDL_FLIP_NONE);
 }
+
+bool SpaceObject::collidesWithObject(double x, double y, int width, int height)
+{
+	// Check that the object is not totally to the left or to the right of this object
+	bool xAxisCollision = !(x + width < mPosition.X || x > mPosition.X + mTexture.getWidth());
+
+	// Check that the object is not totally above or bellow this object
+	bool yAxisCollision = !(y + height < mPosition.Y || y > mPosition.Y + mTexture.getHeight());
+
+	return xAxisCollision && yAxisCollision;
+}
+
