@@ -75,6 +75,7 @@ bool Space::checkHitAsteroid(Bullet bullet)
 {
 	bool hit = false;
 	auto asteroid = mAsteroids.begin();
+	std::vector<Asteroid*> newAsteroids;
 	while (asteroid != mAsteroids.end())
 	{
 		SpacePoint asteroidPosition = (*asteroid)->getPosition();
@@ -82,12 +83,24 @@ bool Space::checkHitAsteroid(Bullet bullet)
 			(*asteroid)->getWidth(), (*asteroid)->getWidth()))
 		{
 			hit = true;
+			std::vector<Asteroid*> childrenAsteroids = (*asteroid)->hit();
+			newAsteroids.insert(newAsteroids.end(), childrenAsteroids.begin(), childrenAsteroids.end());
 			*asteroid = nullptr;
 			asteroid = mAsteroids.erase(asteroid);
 		}
 		else
 		{
 			asteroid++;
+		}
+	}
+
+	if (newAsteroids.size() > 0)
+	{
+		auto newAsteroid = newAsteroids.begin();
+		while (newAsteroid != newAsteroids.end())
+		{
+			mAsteroids.push_back(*newAsteroid);
+			newAsteroid++;
 		}
 	}
 	return hit;
