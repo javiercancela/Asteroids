@@ -6,26 +6,26 @@ SpacePoint::SpacePoint()
 	Y = 0;
 }
 
-void SpacePoint::add(SpacePoint spaceDistance)
+void SpacePoint::add(SpacePoint spaceDistance, int spaceWidth, int spaceHeight)
 {
 	X += spaceDistance.X;
 	Y += spaceDistance.Y;
 
-	if (X > WINDOW_WIDTH)
+	if (X > spaceWidth)
 	{
-		X = X - WINDOW_WIDTH;
+		X = X - spaceWidth;
 	}
 	else if (X < 0)
 	{
-		X = X + WINDOW_WIDTH;
+		X = X + spaceWidth;
 	}
-	if (Y > WINDOW_HEIGHT)
+	if (Y > spaceHeight)
 	{
-		Y = Y - WINDOW_HEIGHT;
+		Y = Y - spaceHeight;
 	}
 	else if (Y < 0)
 	{
-		Y = Y + WINDOW_HEIGHT;
+		Y = Y + spaceHeight;
 	}
 
 }

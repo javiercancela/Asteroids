@@ -34,7 +34,7 @@ LTexture gFPSTextTexture;
 SDL_Renderer* gRenderer = NULL;
 
 
-bool init()
+bool init(int* windowWidth, int* windowHeight)
 {
 	//Initialization flag
 	bool success = true;
@@ -54,7 +54,11 @@ bool init()
 		}
 
 		//Create game windows, with default position
-		gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+		//gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+		gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+			0, 0, SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_GetWindowSize(gWindow, windowWidth, windowHeight);
+		
 		if (gWindow == NULL)
 		{
 			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -127,8 +131,11 @@ void close()
 
 int main(int argc, char* args[])
 {
+	int windowWidth = 0;
+	int windowHeight = 0;
+
 	//Start up SDL and create window
-	if (!init())
+	if (!init(&windowWidth, &windowHeight))
 	{
 		printf("Failed to initialize!\n");
 	}
@@ -154,14 +161,11 @@ int main(int argc, char* args[])
 			SDL_Color textColor = { 255, 255, 255, 255 };
 
 			// Create starship and space
-			Space space(ASTEROIDS_COUNT, gRenderer);
+			Space space(ASTEROIDS_COUNT, gRenderer, windowWidth, windowHeight);
 
 			//While application is running
 			while (!quit)
 			{
-				// In memory text stream
-				std::stringstream pointsText;
-
 				//Handle events on queue
 				while (SDL_PollEvent(&e) != 0)
 				{
@@ -173,6 +177,14 @@ int main(int argc, char* args[])
 				}
 
 				const Uint8* kb = SDL_GetKeyboardState(NULL);
+
+				if (kb[SDL_SCANCODE_ESCAPE] > 0)
+				{
+					quit = true;
+				}
+
+				// In memory text stream
+				std::stringstream pointsText;
 
 				// Rotate starship, left (-1) o right (+1) 
 				// (kb[KEY] equals 1 if KEY is pressed

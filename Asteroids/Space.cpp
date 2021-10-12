@@ -1,17 +1,20 @@
 #include "Space.h"
 
 
-Space::Space(int asteroidsCount, SDL_Renderer* renderer)
+Space::Space(int asteroidsCount, SDL_Renderer* renderer, int width, int height)
 {
 	mStarship = new Starship(renderer);
-	
+	mScreenWidth= width;
+	mScreenHeight = height;
+	mNewAsteroids = asteroidsCount;
+	mRenderer = renderer;
 
 	SpacePoint sp;
-	sp.X = (WINDOW_WIDTH - STARSHIP_SIZE) / 2;
-	sp.Y = (WINDOW_HEIGHT - STARSHIP_SIZE) / 2;
+	sp.X = (mScreenWidth - STARSHIP_SIZE) / 2;
+	sp.Y = (mScreenHeight - STARSHIP_SIZE) / 2;
 	mStarship->setPosition(sp);
 
-	addAsteroids(asteroidsCount, renderer);
+	addAsteroids();
 }
 
 Space::~Space()
@@ -45,7 +48,7 @@ void Space::updateStarship()
 {
 	SpacePoint starshipMovement = mStarship->getPositionChange();
 	SpacePoint starshipPosition = mStarship->getPosition();
-	starshipPosition.add(starshipMovement);
+	starshipPosition.add(starshipMovement, mScreenWidth, mScreenHeight);
 	mStarship->setPosition(starshipPosition);
 }
 
@@ -56,10 +59,10 @@ void Space::updateBullets()
 	{
  		SpacePoint bulletMovement = bullet->getPositionChange();
 		SpacePoint bulletPosition = bullet->getPosition();
-		bulletPosition.add(bulletMovement);
+		bulletPosition.add(bulletMovement, mScreenWidth, mScreenHeight);
 
 		// If bullet dies (too much distance) or hits asteroid -> delete bullet
-		if (bullet->getDistance() > WINDOW_HEIGHT || checkBulletHitAsteroid(*bullet))
+		if (bullet->getDistance() > mScreenHeight || checkBulletHitAsteroid(*bullet))
 		{
 			bullet = mBullets.erase(bullet);
 		}
@@ -122,13 +125,19 @@ bool Space::checkAsteroidHitStarship(Asteroid* asteroid)
 
 void Space::updateAsteroids()
 {
+	if (mAsteroids.size() == 0)
+	{
+		mNewAsteroids++;
+		addAsteroids();
+
+	}
 	auto asteroid = mAsteroids.begin();
 	while (asteroid != mAsteroids.end())
 	{
 		(*asteroid)->rotate(1);
 		SpacePoint asteroidMovement = (*asteroid)->getPositionChange();
 		SpacePoint asteroidPosition = (*asteroid)->getPosition();
-		asteroidPosition.add(asteroidMovement);
+		asteroidPosition.add(asteroidMovement, mScreenWidth, mScreenHeight);
 		(*asteroid)->setPosition(asteroidPosition);
 		checkAsteroidHitStarship(*asteroid);
 		asteroid++;
@@ -140,9 +149,9 @@ void Space::addBullet(Bullet bullet)
 	mBullets.push_back(bullet);
 }
 
-void Space::addAsteroids(int asteroidsCount, SDL_Renderer* renderer)
+void Space::addAsteroids()
 {
-	for (int i = 0; i < asteroidsCount; i++)
+	for (int i = 0; i < mNewAsteroids; i++)
 	{
 		time_t tmp = time(NULL);
 		srand(tmp + 10*i);
@@ -152,14 +161,14 @@ void Space::addAsteroids(int asteroidsCount, SDL_Renderer* renderer)
 		int axis = rand() % 2;
 		if (axis == 0)
 		{
-			x = rand() % WINDOW_WIDTH;
+			x = rand() % mScreenWidth;
 		}
 		else
 		{
-			y = rand() % WINDOW_HEIGHT;
+			y = rand() % mScreenHeight;
 		}
 
-		Asteroid* asteroid = new Asteroid(direction, x, y, renderer);
+		Asteroid* asteroid = new Asteroid(direction, x, y, mRenderer);
 		mAsteroids.push_back(asteroid);
 	}
 }
