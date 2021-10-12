@@ -83,6 +83,7 @@ bool Space::checkBulletHitAsteroid(Bullet bullet)
 			(*asteroid)->getWidth(), (*asteroid)->getWidth()))
 		{
 			hit = true;
+			mPoints += 10;
 			std::vector<Asteroid*> childrenAsteroids = (*asteroid)->hit();
 			newAsteroids.insert(newAsteroids.end(), childrenAsteroids.begin(), childrenAsteroids.end());
 			*asteroid = nullptr;
@@ -166,4 +167,9 @@ void Space::addAsteroids(int asteroidsCount, SDL_Renderer* renderer)
 Starship* Space::getStarship()
 {
 	return mStarship;
+}
+
+int Space::getPoints()
+{
+	return mPoints;
 }

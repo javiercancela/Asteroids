@@ -153,22 +153,15 @@ int main(int argc, char* args[])
 			// Set white color for text
 			SDL_Color textColor = { 255, 255, 255, 255 };
 
-			// The frames per second timer
-			LTimer fpsTimer;
-
-			// In memory text stream
-			std::stringstream timeText;
-
-			// Start counting frames per second
-			int countedFrames = 0;
-			fpsTimer.start();
-
 			// Create starship and space
 			Space space(ASTEROIDS_COUNT, gRenderer);
 
 			//While application is running
 			while (!quit)
 			{
+				// In memory text stream
+				std::stringstream pointsText;
+
 				//Handle events on queue
 				while (SDL_PollEvent(&e) != 0)
 				{
@@ -208,19 +201,6 @@ int main(int argc, char* args[])
 					bulletShot = false;
 				}
 
-				// Calculate and correct fps
-				float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
-				if (avgFPS > 2000000)
-				{
-					avgFPS = 0;
-				}
-
-				// Set text
-				timeText.str("");
-				//timeText << "Average FPS: " << avgFPS;
-
-
-
 				//Clear screen with black color
 				SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0xFF);
 				SDL_RenderClear(gRenderer);
@@ -234,18 +214,17 @@ int main(int argc, char* args[])
 				// Render everything
 				space.render();
 
-				timeText << "Shots: " << bulletShot;
+				pointsText << "Points: " << space.getPoints();
 
 				//Render text
-				if (!gFPSTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor, gRenderer, gFont))
+				if (!gFPSTextTexture.loadFromRenderedText(pointsText.str().c_str(), textColor, gRenderer, gFont))
 				{
-					printf("Unable to render FPS texture!\n");
+					printf("Unable to render Points texture!\n");
 				}
 				gFPSTextTexture.render(100, 50, gRenderer);
 
 				//Update screen
 				SDL_RenderPresent(gRenderer);
-				++countedFrames;
 			}
 		}
 	}

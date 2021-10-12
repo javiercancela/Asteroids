@@ -17,11 +17,13 @@ public:
 	void addBullet(Bullet bullet);
 	void addAsteroids(int asteroidsCount, SDL_Renderer* renderer);
 	Starship* getStarship();
+	int getPoints();
 	
 private:
 	Starship* mStarship;
 	std::vector<Bullet> mBullets;
 	std::vector<Asteroid*> mAsteroids;
+	int mPoints = 0;
 	void updateStarship();
 	void updateBullets();
 	bool checkBulletHitAsteroid(Bullet bullet);
