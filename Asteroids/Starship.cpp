@@ -28,11 +28,32 @@ void Starship::loadTexture()
 	{
 		printf("Failed to load starship thrust texture!\n");
 	}
+	if (!mExplodingTexture.loadFromFile("Resources/starship-exploding.png", mRenderer))
+	{
+		printf("Failed to load starship exploding texture!\n");
+	}
+	else
+	{
+		int spriteWidth = mTexture.getWidth();
+		int spriteHeight = mTexture.getHeight();
+		for (int i = 0; i < EXPLODING_SPRITES; i++)
+		{
+			mExplosionSprite[i].x = i * spriteWidth;
+			mExplosionSprite[i].y = 0;
+			mExplosionSprite[i].w = spriteWidth;
+			mExplosionSprite[i].h = spriteHeight;
+		}
+	}
 }
 
 
 void Starship::thrust()
 {
+	if (isExploding)
+	{
+		return;
+	}
+
 	double currentSpeedX = mSpeed * cos(mDirection * PI / 180);
 	double currentSpeedY = mSpeed * sin(mDirection * PI / 180);
 
@@ -79,10 +100,34 @@ SpacePoint Starship::getGunPosition()
 	return spacePoint;
 }
 
+void Starship::startExploding()
+{
+	isExploding = true;
+	mSpeed = 0;
+}
+
+void Starship::stopExploding()
+{
+	mExplodingFrame = 0;
+	isExploding = false;
+}
+
 void Starship::render()
 {
 	LTexture* texture = NULL;
-	if (isThrusting)
+	SDL_Rect* sprite = NULL;
+
+	if (isExploding)
+	{
+		texture = &mExplodingTexture;
+		sprite = &mExplosionSprite[mExplodingFrame / FRAMES_PER_SPRITE];
+		mExplodingFrame++;
+		if (mExplodingFrame / FRAMES_PER_SPRITE >= EXPLODING_SPRITES)
+		{
+			stopExploding();
+		}
+	}
+	else if (isThrusting)
 	{
 		texture = &mThrustTexture;
 	}
@@ -91,5 +136,5 @@ void Starship::render()
 		texture = &mTexture;
 	}
 	
-	texture->render(mPosition.X, mPosition.Y, mRenderer, NULL, mOrientation, NULL, SDL_FLIP_NONE);
+	texture->render(mPosition.X, mPosition.Y, mRenderer, sprite, mOrientation, NULL, SDL_FLIP_NONE);
 }

@@ -59,7 +59,7 @@ void Space::updateBullets()
 		bulletPosition.add(bulletMovement);
 
 		// If bullet dies (too much distance) or hits asteroid -> delete bullet
-		if (bullet->getDistance() > WINDOW_HEIGHT || checkHitAsteroid(*bullet))
+		if (bullet->getDistance() > WINDOW_HEIGHT || checkBulletHitAsteroid(*bullet))
 		{
 			bullet = mBullets.erase(bullet);
 		}
@@ -71,7 +71,7 @@ void Space::updateBullets()
 	}
 }
 
-bool Space::checkHitAsteroid(Bullet bullet)
+bool Space::checkBulletHitAsteroid(Bullet bullet)
 {
 	bool hit = false;
 	auto asteroid = mAsteroids.begin();
@@ -106,6 +106,19 @@ bool Space::checkHitAsteroid(Bullet bullet)
 	return hit;
 }
 
+bool Space::checkAsteroidHitStarship(Asteroid* asteroid)
+{
+	bool hit = false;
+
+	if (asteroid->collidesWithObject(mStarship->getPosition().X, mStarship->getPosition().Y,
+		mStarship->getWidth(), mStarship->getHeight()))
+	{
+		hit = true;
+		mStarship->startExploding();
+	}
+	return hit;
+}
+
 void Space::updateAsteroids()
 {
 	auto asteroid = mAsteroids.begin();
@@ -116,9 +129,11 @@ void Space::updateAsteroids()
 		SpacePoint asteroidPosition = (*asteroid)->getPosition();
 		asteroidPosition.add(asteroidMovement);
 		(*asteroid)->setPosition(asteroidPosition);
+		checkAsteroidHitStarship(*asteroid);
 		asteroid++;
 	}
 }
+
 void Space::addBullet(Bullet bullet)
 {
 	mBullets.push_back(bullet);
